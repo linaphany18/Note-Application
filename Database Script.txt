@@ -1,0 +1,37 @@
+Database Script
+
+CREATE DATABASE note_db;
+
+CREATE TABLE [dbo].[Users] (
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [Username] NVARCHAR(100) NOT NULL UNIQUE,
+    [Email] NVARCHAR(255) NOT NULL UNIQUE,
+    [PasswordHash] NVARCHAR(255) NOT NULL,
+    [Role] NVARCHAR(50) DEFAULT 'User',
+    [CreatedAt] DATETIME DEFAULT GETUTCDATE(),   
+    [IsActive] BIT DEFAULT 1
+);
+
+CREATE TABLE [dbo].[Notes] (
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [UserId] INT NOT NULL,
+    [Title] NVARCHAR(255) NOT NULL,
+    [Content] NVARCHAR(MAX),
+    [CreatedAt] DATETIME DEFAULT GETUTCDATE(), 
+    [UpdatedAt] DATETIME NULL,                 
+    [IsDeleted] BIT DEFAULT 0,
+
+    CONSTRAINT FK_Notes_Users FOREIGN KEY ([UserId])
+        REFERENCES [dbo].[Users]([Id])
+        ON DELETE CASCADE
+);
+
+Create User
+
+INSERT INTO [dbo].[Users]
+    ([Username], [PasswordHash], [Role], [IsActive])
+VALUES
+    ('user', '$2a$12$5ZqZdXfVHHk/sZKMmbk6TOPrlJ6SDxf83ZCYoHSFDcjdJ.5KnVhpm', 'USER', 1);
+
+
+PassordHash generator : https://bcrypt-generator.com/
